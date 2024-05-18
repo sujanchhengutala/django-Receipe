@@ -2,6 +2,7 @@
 {% block start %}
 
 <div class="container mt-5">
+
     <form class="mx-auto col-5 p-3 card shadow-lg" method="post" enctype="multipart/form-data">
         {%csrf_token%}
         <h2>Add Receipe</h2>
@@ -26,9 +27,17 @@
         <button type="submit" class="btn btn-success">Add Receipe</button>
       </form>
   
+<form>
+    <div class="mt-5">
+        <div class=" container col-6">
+            <label for="exampleInputEmail1" class="form-label">Search</label>
+            <input type="text" name="search" class="form-control">
+            <button class="btn btn-success mt-3">Searcch</button>
+        </div>
+    </div>
+</form>
 
-
-      <table class="table">
+      <table class="table mt-5">
         <thead>
           <tr>
             <th scope="col">SN</th>
@@ -47,7 +56,10 @@
             <td>
                 <img src="/media/{{receipe.receipe_image}}" width="200" height="200">
             </td>
-            <td><a href="/delete_receipe/{{receipe.id}}/" class="btn btn-danger">Delete</a></td>
+            <td>
+                <a href="/delete_receipe/{{receipe.id}}/" class="btn btn-danger">Delete</a>
+                <a href="/update_receipe/{{receipe.id}}/" class="btn btn-primary">Update</a>
+            </td>
 
           </tr>
           {% endfor %}
