@@ -1,0 +1,32 @@
+
+{% extends "base.html" %}
+{% block start %}
+<a href="about">About</a> <a href="contact">Contact</a>
+    <h1>hello world</h1>
+
+    {{peoples}}
+    <hr>
+
+        <table style="width:100%" class="container">
+        <tr>
+          <th>SN. NO</th>
+          <th>NAME</th>
+          <th>AGE</th>
+          <th>can vote</th>
+        </tr>
+        {% for people in peoples %}
+        <tr>
+          <td>{{forloop.counter}}</td>
+          <td>{{people.name}}</td>
+          <td>{{people.age}}</td>
+          <td {% if people.age < 18 %} style = "background:red" {% else %} style = "background-color: green;" {% endif %} >
+            {% if people.age >= 18 %}
+            👍
+            {% else %}
+            👎
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+{% endblock %}
