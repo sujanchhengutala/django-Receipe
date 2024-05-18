@@ -34,6 +34,13 @@ def receipes(request):
             receipe_image = receipe_image
         )
         return redirect("/receipe/")
+    queryset = Receipe.objects.all()
+    context = {'receipes': queryset}
         
     # print(data)
-    return render(request, "receipes.html")
+    return render(request, "receipes.html", context)
+
+def delete_receipe(request, id):
+    queryset = Receipe.objects.get(id = id)
+    queryset.delete()
+    return redirect("/receipe/")
