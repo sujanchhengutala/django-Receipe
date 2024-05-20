@@ -1,5 +1,8 @@
 from django.shortcuts import render, redirect
 from .models import *
+from django.contrib.auth.models import User
+from django.contrib import messages
+from django.contrib.auth import authenticate, login
 
 # Create your views here.
 
@@ -44,8 +47,7 @@ def receipes(request):
     # print(data)
     return render(request, "receipes.html", context)
 
-    path("delete_receipe/<id>/",delete_receipe, name="delete_receipe"),
-    path("delete_receipe/<id>/",delete_receipe, name="delete_receipe"),
+# ====================================update functionality==========================
 def update_receipe(request, id):
     queryset = Receipe.objects.get(id=id)
     
@@ -70,3 +72,52 @@ def delete_receipe(request, id):
     queryset = Receipe.objects.get(id = id)
     queryset.delete()
     return redirect("/receipe/")
+
+
+# ==============================login page=====================================
+
+def login_page(request):
+    if(request.method == "POST"):
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        isuserExist = User.objects.filter(username = username).exists()
+        
+        if not isuserExist:
+            messages.info(request, "INVALID USERNAME ")
+            return redirect("/login")
+        
+        user = authenticate(username=username, password = password)
+        
+        if user is None:
+            messages.error(request, "INVALID PASSWORD ")
+            return redirect("/login")
+        else:
+            print("true")
+            login(request, user) 
+            return redirect("/receipe/")
+              
+    return render(request, "login.html")
+
+# ===============================registeration==================================
+
+def register_page(request):
+    if(request.method == "POST"):
+        first_name = request.POST.get("first_name")
+        last_name = request.POST.get("last_name")
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        isuserExist = User.objects.filter(username = username)
+        if isuserExist:
+            messages.info(request, "Username alreday exist")
+            return redirect("/register")
+        user = User.objects.create(
+            first_name = first_name,
+            last_name = last_name,
+            username = username
+        )
+        user.set_password(password)
+        user.save()
+        messages.info(request, "Regrestration successful")
+        return redirect("/register")
+        
+    return render(request, "register.html")
