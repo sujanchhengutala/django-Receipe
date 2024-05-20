@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect
 from .models import *
 from django.contrib.auth.models import User
 from django.contrib import messages
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
@@ -22,6 +23,7 @@ def home(request):
     },]
     return render(request, "index.html", context={'peoples':peoples})
 
+@login_required(login_url="/login")
 def receipes(request):
     if(request.method=="POST"):
         data = request.POST
@@ -74,6 +76,31 @@ def delete_receipe(request, id):
     return redirect("/receipe/")
 
 
+# ===============================registeration==================================
+
+def register_page(request):
+    if(request.method == "POST"):
+        first_name = request.POST.get("first_name")
+        last_name = request.POST.get("last_name")
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        isuserExist = User.objects.filter(username = username)
+        if isuserExist:
+            messages.info(request, "Username alreday exist")
+            return redirect("/register")
+        user = User.objects.create(
+            first_name = first_name,
+            last_name = last_name,
+            username = username
+        )
+        user.set_password(password)
+        user.save()
+        messages.info(request, "Regrestration successful")
+        return redirect("/register")
+        
+    return render(request, "register.html")
+
+
 # ==============================login page=====================================
 
 def login_page(request):
@@ -98,26 +125,9 @@ def login_page(request):
               
     return render(request, "login.html")
 
-# ===============================registeration==================================
+# =================================logout functionality======================================================
 
-def register_page(request):
-    if(request.method == "POST"):
-        first_name = request.POST.get("first_name")
-        last_name = request.POST.get("last_name")
-        username = request.POST.get("username")
-        password = request.POST.get("password")
-        isuserExist = User.objects.filter(username = username)
-        if isuserExist:
-            messages.info(request, "Username alreday exist")
-            return redirect("/register")
-        user = User.objects.create(
-            first_name = first_name,
-            last_name = last_name,
-            username = username
-        )
-        user.set_password(password)
-        user.save()
-        messages.info(request, "Regrestration successful")
-        return redirect("/register")
-        
-    return render(request, "register.html")
+def logout_page(request):
+    logout(request)
+    return render(request, "login.html")
+
